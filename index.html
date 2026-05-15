@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>نموذج بيانات العاملين - منطقة الاتارب</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+    :root {
+      --primary: #00897b; /* لون صحي رئيسي (Teal) */
+      --primary-dark: #00695c;
+      --secondary: #4db6ac;
+      --bg-gradient-1: #e0f2f1;
+      --bg-gradient-2: #f3f4f6;
+      --text-main: #263238;
+      --text-muted: #546e7a;
+      --white: #ffffff;
+      --danger: #e53935;
+      --success: #43a047;
+    }
+    body { font-family: 'Tajawal', sans-serif; background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%); margin: 0; min-height: 100vh; color: var(--text-main); overflow-x: hidden; }
+    
+    /* الأنيميشن والتأثيرات الحركية */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(0, 137, 123, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(0, 137, 123, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 137, 123, 0); } }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes heartbeat { 0% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } 75% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .login-card { background: var(--white); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: center; max-width: 900px; width: 100%; animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-top: 6px solid var(--primary); position: relative; overflow: hidden; }
+    .login-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: var(--bg-gradient-1); border-radius: 50%; opacity: 0.6; z-index: 0; }
+    .login-card > * { position: relative; z-index: 1; }
+    .logo { width: 140px; height: auto; margin-bottom: 20px; animation: fadeInDown 0.8s ease; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+    .login-title { color: var(--primary-dark); margin-bottom: 30px; font-weight: 700; font-size: 28px; animation: fadeInDown 0.9s ease; }
+    
+    #centersGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; animation: fadeInUp 1s ease; }
+    .center-btn { background: var(--white); color: var(--primary-dark); padding: 15px 20px; border: 2px solid var(--secondary); border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease; font-family: 'Tajawal', sans-serif; position: relative; overflow: hidden; }
+    .center-btn:hover { background: var(--primary); color: var(--white); border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 137, 123, 0.3); }
+    
+    #pwdForm { margin-top: 30px; padding: 30px; background: #f1f8f6; border-radius: 15px; animation: zoomIn 0.4s ease; border: 1px solid var(--secondary); }
+    #pwdInput { padding: 15px; margin: 15px 0; border: 2px solid #b2dfdb; border-radius: 10px; width: 100%; max-width: 300px; font-size: 16px; box-sizing: border-box; text-align: center; transition: 0.3s; font-family: 'Tajawal', sans-serif; }
+    #pwdInput:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.15); outline: none; }
+    
+    .btn-action { background: var(--primary); color: white; border: none; padding: 12px 28px; cursor: pointer; font-weight: bold; border-radius: 10px; font-size: 16px; transition: all 0.3s ease; font-family: 'Tajawal', sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-action:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 105, 92, 0.3); }
+    .back-btn { background: var(--text-muted); }
+    .back-btn:hover { background: #37474f; box-shadow: 0 5px 15px rgba(84, 110, 122, 0.3); }
+    .btn-save { background: var(--success); animation: pulseGlow 2s infinite; }
+    .btn-save:hover { background: #2e7d32; animation: none; }
+    
+    .grid-container { display: none; padding: 25px; animation: fadeInDown 0.6s ease; }
+    
+    /* النافذة المنبثقة (الترحيب) */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 38, 56, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeInDown 0.3s ease; backdrop-filter: blur(4px); }
+    .modal-box { background: var(--white); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); text-align: center; max-width: 450px; width: 90%; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-top: 6px solid var(--primary); }
+    .modal-icon { font-size: 55px; margin-bottom: 15px; display: inline-block; animation: heartbeat 2s infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+    .modal-box h3 { color: var(--primary-dark); margin: 0 0 15px 0; font-size: 24px; font-weight: 700; }
+    .modal-box p { color: var(--text-muted); margin: 0 0 30px 0; font-size: 18px; line-height: 1.6; }
+
+    /* النافذة المنبثقة (النجاح) مخصصة بديلة عن Alert المتصفح */
+    .success-modal .modal-box { border-top: 6px solid var(--success); }
+    .success-icon { font-size: 60px; color: var(--success); margin-bottom: 15px; display: inline-block; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .success-modal h3 { color: var(--success); }
+    .success-modal .btn-action { background: var(--success); }
+    .success-modal .btn-action:hover { background: #2e7d32; }
+    .thanks-text { font-size: 15px; color: var(--text-muted); margin-top: 15px; font-weight: bold; }
+
+
+    .controls { background: var(--white); padding: 20px 25px; margin-bottom: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: space-between; border-right: 5px solid var(--primary); }
+    .controls-left { display: flex; gap: 15px; align-items: center; }
+    .controls-right { display: flex; gap: 12px; }
+    
+    .table-wrapper { background: var(--white); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow-x: auto; border-top: 5px solid var(--primary); }
+    table { width: 100%; border-collapse: collapse; min-width: 3200px; font-size: 13.5px; }
+    th, td { border: 1px solid #eceff1; padding: 12px; text-align: center; white-space: nowrap; transition: 0.2s; }
+    th { background-color: var(--primary); color: var(--white); font-weight: 700; height: 50px; vertical-align: middle; font-size: 14px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th.green { background-color: var(--primary-dark); }
+    tr { transition: background-color 0.3s, transform 0.2s; }
+    tr:nth-child(even) { background-color: #fcfcfc; }
+    tr:hover { background-color: #e0f2f1; transform: scale(1.002); box-shadow: 0 4px 12px rgba(0, 137, 123, 0.1); z-index: 5; position: relative; }
+    
+    table input, table select { border: 1px solid transparent; background: transparent; width: 100%; text-align: center; font-family: inherit; font-size: 13.5px; padding: 8px; border-radius: 6px; box-sizing: border-box; transition: 0.3s; color: var(--text-main); font-weight: 500; }
+    table input:focus, table select:focus { background: var(--white); border: 1px solid var(--primary); box-shadow: 0 0 0 3px rgba(0, 137, 123, 0.15); outline: none; }
+    table select { cursor: pointer; }
+    
+    .del-btn { background: var(--danger); color: white; border: none; border-radius: 8px; cursor: pointer; padding: 8px 14px; font-weight: bold; transition: all 0.3s ease; }
+    .del-btn:hover { background: #c62828; transform: scale(1.1); box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); }
+    
+    /* حقوق المبرمج */
+    .programmer-signature { text-align: center; padding: 25px 15px; margin-top: auto; color: var(--text-muted); font-size: 14.5px; animation: fadeInUp 1.2s ease; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .programmer-name { font-weight: 700; color: var(--primary); background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary)); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text; animation: gradientText 3s linear infinite; display: inline-block; padding: 0 5px; }
+    .heart-icon { color: var(--danger); animation: heartbeat 1.5s infinite; display: inline-block; }
+    
+    @keyframes gradientText { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+    /* سجل الأسماء المرفوعة */
+    .submitted-log { background: #e0f2f1; border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; border-right: 5px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: fadeInDown 0.5s ease; }
+    .submitted-log h4 { margin-top: 0; color: var(--primary-dark); margin-bottom: 12px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+    .submitted-list { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; margin: 0; list-style: none; }
+    .submitted-item { background: var(--white); color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 13.5px; font-weight: bold; border: 1px solid var(--secondary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 6px; }
+    .submitted-item span { color: var(--success); font-size: 16px; }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen">
+    <div class="login-card">
+      <img src="logo.png" alt="شعار" class="logo">
+      <h2 class="login-title">نظام بيانات العاملين - منطقة الاتارب</h2>
+      <div id="centersGrid"></div>
+      <div id="pwdForm" style="display:none;">
+        <h3 style="color: #2c3e50; margin-top: 0;">تسجيل الدخول</h3>
+        <p style="color: #64748b; margin-bottom: 20px;">المركز المحدد: <span id="selCenterName" style="font-weight:bold; color:#2c7be5;"></span></p>
+        <div>
+          <input type="password" id="pwdInput" placeholder="أدخل كلمة المرور">
+        </div>
+        <div style="margin-top: 15px;">
+          <button onclick="verifyPwd()" class="btn-action">دخول</button>
+          <button onclick="backToCenters()" class="btn-action back-btn">عودة</button>
+        </div>
+        <p id="pwdError" style="color:#ef4444; display:none; margin-top:10px;">كلمة المرور خاطئة!</p>
+      </div>
+    </div>
+    <div class="programmer-signature">
+      تمت البرمجة والتطوير بكل <span class="heart-icon">❤️</span> بواسطة <span class="programmer-name">م. محمد شعبان ريمه</span>
+    </div>
+  </div>
+
+  <!-- نافذة الترحيب المنبثقة -->
+  <div id="welcomeModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <span class="modal-icon">🩺</span>
+      <h3>أهلاً بك أستاذي الكريم</h3>
+      <p>يرجى تعبئة البيانات بدقة تامة والحرص على مراجعتها قبل الحفظ.</p>
+      <button onclick="closeWelcomeModal()" class="btn-action" style="width: 100%;">موافق</button>
+    </div>
+  </div>
+
+  <!-- نافذة النجاح المنبثقة (بديل للـ Alert) -->
+  <div id="successModal" class="modal-overlay success-modal" style="display:none;">
+    <div class="modal-box">
+      <div class="success-icon">✅</div>
+      <h3>عمل رائع!</h3>
+      <p id="successMessageText">تم إرسال البيانات بنجاح.</p>
+      <button onclick="closeSuccessModal()" class="btn-action" style="width: 100%;">موافق</button>
+      <div class="thanks-text">كل الشكر والتقدير لجهودك المبذولة 🌹</div>
+    </div>
+  </div>
+
+  <div id="gridScreen" class="grid-container">
+    <div id="submittedLog" class="submitted-log" style="display:none;">
+      <h4><span>📋</span> الأسماء التي تم رفعها بنجاح (سجل هذا الجهاز):</h4>
+      <ul id="submittedList" class="submitted-list"></ul>
+    </div>
+
+    <div class="controls">
+      <div class="controls-left">
+        <img src="logo.png" alt="شعار" style="height: 50px;">
+        <h3 style="margin:0; color:#2c3e50;">جدول البيانات: <span id="activeCenter" style="color:#2c7be5;"></span></h3>
+      </div>
+      <div class="controls-right">
+        <button onclick="addRow()" class="btn-action">➕ إضافة صف جديد</button>
+        <button onclick="exportToSheet()" class="btn-action btn-save">💾 حفظ البيانات</button>
+        <button onclick="logout()" class="btn-action back-btn">تسجيل خروج</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="dataTable">
+      <thead>
+        <tr>
+          <th style="width:30px;">حذف</th>
+          <th>تسلسل</th>
+          <th>الاسم والكنية</th>
+          <th>الجنسية</th>
+          <th>الجنس</th>
+          <th>محافظة الولادة</th>
+          <th>تاريخ الولادة</th>
+          <th>الرقم الوطني</th>
+          <th>رقم التواصل</th>
+          <th>محافظة العمل</th>
+          <th>اسم الجهة/المؤسسة السابقة</th>
+          <th>المستوى التنظيمي الأولى</th>
+          <th>المستوى التنظيمي الثاني</th>
+          <th>المستوى التنظيمي الثالث</th>
+          <th>تاريخ بدء العمل</th>
+          <th>المسمى الوظيفي</th>
+          <th class="green">المؤهل العلمي</th>
+          <th class="green">التخصص العام</th>
+          <th class="green">التخصص الدقيق</th>
+          <th>الراتب الشهري الأخير</th>
+          <th>هل تم تدقيق اثبات الشخصية؟</th>
+          <th>هل تم تدقيق صك التعاقد السابق؟</th>
+          <th>هل تم تدقيق المؤهل العلمي المتعاقد عليه؟</th>
+          <th>هل المسمى الوظيفي مطابق...؟</th>
+          <th>المسمى الوظيفي ومكان العمل المقترح...</th>
+          <th>مدى ومبرر الحاجة للتعاقد</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+  const centers = [
+    { name: "مركز كفر نوران", pwd: "8341", manager: "د محمد العثمان" },
+    { name: "مركز ابين", pwd: "5920", manager: "أ محمد حزوري" },
+    { name: "مركز الابزمو", pwd: "7164", manager: "أ فيصل الغبد" },
+    { name: "مركز الاتارب", pwd: "3092", manager: "أ محمد بكور" },
+    { name: "الاتارب العبادات الشاملة", pwd: "4827", manager: "أ حسام عبدالوهاب" },
+    { name: "مركز كفرناصح", pwd: "6519", manager: "أ محمود خليل" },
+    { name: "مركز التوامة", pwd: "9273", manager: "أ حسن عساف" },
+    { name: "مركز باتبو", pwd: "1485", manager: "د أحمد العبدو" },
+    { name: "مركز اورم الكبرى", pwd: "2756", manager: "أ مظفر" },
+    { name: "مركز السحارة", pwd: "6308", manager: "أ محمود العمر" },
+    { name: "مركز الجينة", pwd: "5194", manager: "أ أحمد جمجمي" },
+    { name: "مركز غسيل الكلى", pwd: "9514", manager: "أستاذي الكريم" },
+    { name: "مركز بيانات أخرى", pwd: "8042", manager: "أستاذي الكريم" }
+  ];
+
+  // الهيكل الهرمي الكامل للبيانات من ملف الإكسل
+  const specsHierarchy = {
+    "شهادة ثانوية": {
+      "ثانوية اتصالات": ["ثانوية اتصالات"],
+      "ثانوية أدبي": ["اقتصاد وعلوم إدارية"],
+      "ثانوية بيطرية": [],
+      "ثانوية تجارية": [],
+      "ثانوية زراعية": [],
+      "ثانوية علمي": [],
+      "ثانوية فندقية": [],
+      "ثانوية فنون": [],
+      "ثانوية معلوماتية": [],
+      "ثانوية مهني صناعة": [],
+      "ثانوية نفط وغاز": [],
+      "ثانوية نقل بحري": []
+    },
+    "معهد": {
+      "معهد التربية الرياضية للمعلمين": [],
+      "المعاهد التقاني للزراعات المتوسطية": ["انتاج حيواني", "أشجار مثمرة", "زراعات محمية", "زينة وتنسيق حدائق"],
+      "المعهد التربوي (سابقا معهد اعداد المدرسين)": ["العمل اليدوي", "اللغة العربية", "اللغة الفرنسية", "انكليزي", "تربية فنية", "تربية موسيقية", "رياضيات", "علوم", "كيمياء"],
+      "المعهد التقاني الإحصائي": ["الحاسوب والإحصاء", "إحصاء تطبيقي"],
+      "المعهد التقاني التجاري": ["اسواق مالية", "إدارة", "تجاري مصرفي", "محاسبة", "مصارف وتأمين"],
+      "المعهد التقاني الزراعي": ["إنتاج حيواني", "إنتاج نباتي", "أشجار مثمرة", "بساتين", "تربية نحل", "زراعات محمية", "زينة وتنسيق حدائق", "علوم أغذية", "محاصيل حقلية", "محاصيل صناعية"],
+      "المعهد التقاني الصحي": ["إحصاء صحي وحيوي", "أشعة", "أطراف صناعية", "بصريات", "تخدير", "تمريض", "صحة عامة", "صيانة أجهزة طبية", "صيدلة", "طب طوارئ", "مخابر", "معالجة فيزيائية"],
+      "المعهد التقاني الصناعي": ["اتصالات", "أجهزة دقيقة", "تبريد وتكييف", "تجهيزات طبية", "تحكم آلي", "تدفئة مركزية", "تصميم داخلي", "تصنيع ميكانيكي", "تعبئة ونقل", "تقنيات إلكترونية", "تقنيات حاسوب", "تقنيات كهربائية", "جرارات وأليات زراعية", "حدادة ولحام", "خراطة وتسوية", "سباكة ونماذج", "قوالب معدنية وبلاستيكية", "كيمياء صناعية", "لحام وتشكيل إنشاءات معدنية", "محركات بحرية", "ميكانيك مركبات", "نجارة الأثاث"],
+      "المعهد التقاني الطبي": ["إحصاء حيوي", "أشعة", "أطراف إصطناعية", "بصريات", "تأهيل السمع والنطق", "تخدير", "تشريح مرضي", "تمريض", "صحة عامة", "صيانة أجهزة طبية", "صيدلة", "طب طوارئ", "مخابر", "معالجة فيزيائية", "قبالة"],
+      "المعهد التقاني القانوني": [],
+      "المعهد التقاني المالي": ["محاسبة ضرائب ورسوم", "محاسبة نفقات"],
+      "المعهد التقاني الهندسي": ["الرسم والإنشاء الهندسي", "الشؤون الفنية والبلديات", "الصحية والمائية", "المساحة", "الهندسة البيئية", "إنشاءات عامة", "تصميم داخلي", "عمارة", "نقل ومواصلات"],
+      "المعهد التقاني لإدارة الأعمال والتسويق": ["إدارة أعمال", "إدارة مؤتمرات ومعارض", "أعمال إدارية", "تسويق", "سكرتاريا", "علاقات عامة"],
+      "المعهد التقاني لشؤون البادية والتصحر": [],
+      "المعهد التقاني لطب الأسنان": ["تعويضات سنية", "مساعد طبيب أسنان"],
+      "المعهد التقاني للاتصالات": [],
+      "المعهد التقاني للاعلام والطباعة": ["تصوير ومونتاج", "طباعة ونشر"],
+      "المعهد التقاني للإقتصاد المنزلي": [],
+      "المعهد التقاني للأرصاد الجوية": [],
+      "المعهد التقاني للأطراف الصناعية والأجهزة التعويضية": [],
+      "المعهد التقاني للآثار والمتاحف": [],
+      "المعهد التقاني للتجهيزات الطبية": [],
+      "المعهد التقاني للتنمية المستدامة": [],
+      "المعهد التقاني للحاسوب": ["برمجيات", "حواسيب", "حوسبة صناعية", "شبكات حاسوبية", "هندسة برمجيات", "هندسة وصيانة الحواسيب"],
+      "المعهد التقاني للخدمة الاجتماعية": [],
+      "المعهد التقاني للخطوط الحديدية": ["الإشارات والاتصالات", "الأدوات المحركة والمتحركة", "الأعمال المدنية", "إدارة الحركة والنقل", "تسويق وأعمال"],
+      "المعهد التقاني للري الحديث": [],
+      "المعهد التقاني للصناعات التطبيقية": ["الكترون", "انتاج", "ألبسة جاهزة", "آليات", "آليات زراعية", "صناعات غذائية", "غزل", "كهرباء", "كيمياء النسيج", "كيمياء عام -تكنولوجيا", "كيمياء عام -مخابر", "نسيج"],
+      "المعهد التقاني للصناعات الغذائية": [],
+      "المعهد التقاني للصناعات الكيميائية": ["تكنولوجيا الصناعات الكيميائية", "مخابر كيميائية"],
+      "المعهد التقاني للصناعات النسيجية": ["ألبسة جاهزة", "غزل", "كيمياء النسيج", "نسيج"],
+      "المعهد التقاني للطاقات المتجددة": [],
+      "المعهد التقاني للطب البيطري": ["دواجن", "رعاية تناسلية وتلقيح اصطناعي", "مخابر بيطرية", "وقاية عامة"],
+      "المعهد التقاني للعلوم السياحية والفندقية": ["التدبير فندقي", "إدارة مكاتب سياحية وسفر", "دلالة المناطق السياحية والأثرية", "عمليات مكاتب أمامية", "مطبخ وحلويات", "مطعم ومنهل"],
+      "المعهد التقاني للعلوم المالية والإدارية": ["إدارة", "إدارة أعمال", "تمويل واستثمار", "محاسبة"],
+      "المعهد التقاني للعلوم المالية والمصرفية": ["إدارة", "أسواق مالية", "تأمين", "محاسبة", "مصارف"],
+      "المعهد التقاني للغابات": [],
+      "المعهد التقاني للفنون التطبيقية": ["التصوير الضوئي والتلفزيوني", "خزف", "خط عربي وزخرفة", "نحت"],
+      "المعهد التقاني للمحاسبة والتمويل": ["الأسواق المالية", "تأمين", "محاسبة"],
+      "المعهد التقاني للمراقبين الفنيين": ["الإنشاءات العامة", "التصميم الداخلي", "الشؤون الفنية والبلديات", "المساحة", "الهندسة الصحية ومحطات المعالجة", "نقل وموصلات ومساحة"],
+      "المعهد التقاني للمكننة الزراعية": [],
+      "المعهد التقاني للنفط والغاز": ["انتاج النفط والغاز", "أجهزة دقيقة", "أجهزة دقيقة وتحكم", "تكرير النفط والغاز", "حفر الابار النفطية", "حفر وإنتاج النفط والغاز", "عمليات نقل وتخزين النفط والغاز", "كهرباء صناعية", "محاسبة ومستودعات", "مياكانيك والات دوارة"],
+      "المعهد التقاني للنقل البحري": ["ملاحة بحرية", "ميكانيك بحري"],
+      "المعهد التقاني للهندسة الميكانيكية والكهربائية": ["اتصالات وتقانة معلومات", "اختصاص حاسوب", "الكترون", "إنتاج", "آليات", "تجهيزات طبية", "تحكم وأتمته", "تدفئة وتكييف وتبريد", "تدقيق وحفظ طاقة", "توليد الطاقة الكهربائية", "صناعية", "طاقات متجددة", "غزل ونسيج", "قوالب معدنية", "قياسات فيزيائية وضبط جودة", "كهرباء", "ميكانيك"],
+      "المعهد العالي للفنون السينمائية": [],
+      "المعهد العالي للفنون المسرحية": ["التصميم وإخراج مسرحي", "تمثيل وإخراج مسرحي", "دراسات مسرحية", "رقص وتمثيل"],
+      "المعهد العالي للموسيقا": [],
+      "المعهد المتوسط للعلوم الشرعية والعربية": [],
+      "مدرسة التمريض": [],
+      "معهد استصلاح الأراضي": [],
+      "معهد التربية الفنية التشكيلية والتطبيقية": [],
+      "معهد تكنولوجيا أمن المعلومات والشبكات": [],
+      "معهد مهني تخصصي للاعلام": ["تصميم وتسويق", "تقديم برامج اذاعية و تلفزيونية"]
+    },
+    "ماجستير": {
+      "اقتصاد وعلوم إدارية": [],
+      "المعهد العالي للفنون السينمائية": [],
+      "المعهد العالي للفنون المسرحية": [],
+      "المعهد العالي للموسيقا": [],
+      "إعلام": [],
+      "آداب وعلوم إنسانية": [],
+      "تربية": [],
+      "تمريض": [],
+      "حقوق": [],
+      "سياحة": [],
+      "شريعة": [],
+      "صيدلة": ["أدوية و سموم", "صيدلانيات وتكنولوجيا صيدلية", "عقاقير", "كيمياء تحليلية وغذائية"],
+      "طب أسنان": ["قسم تعويضات الأسنان الثابتة", "قسم تقويم الأسنان والفكين", "قسم جراحة الفم والفكين", "قسم طب الفم", "قسم طب أسنان الأطفال"],
+      "طب بشري": ["أطفال", "تحليل مخبري", "تخدير", "تشخيص مخبري", "داخلية", "عناية مشددة أطفال", "قلبية أطفال", "نسائية"],
+      "طب بيطري": [],
+      "علوم الحاسوب": [],
+      "علوم العلوم البيئية": [],
+      "علوم بيولوجيا": [],
+      "علوم تطبيقية": ["الدراسات المالية والمصرفية", "إدارة لوجستيات التجارة والنقل الدولي", "إدارة مشروعات متوسطة وصغيرة", "تدفئة وتبريد وتكييف", "حاسوب ونظم معلومات في الاقتصاد والإدارة والمحاسبة", "علوم مالية ومصرفية", "ميكاترونكس"],
+      "علوم تقانة ليزر": [],
+      "علوم جيولوجيا": ["جيوفيزياء", "جيولوجيا تطبيقية", "علوم الزلازل", "هيدروجيولوجيا"],
+      "علوم رياضيات": ["إحصاء رياضي", "تحليل رياضي", "رياضيات بحتة", "رياضيات تطبيقية ومعلوماتية", "رياضيات نظرية"],
+      "علوم سياسية": ["اقتصاد دولي", "دراسات دولية ودبلوماسية", "دراسات سياسية", "علاقات دولية"],
+      "علوم صحية": ["إدارة معلومات صحية", "أطراف صناعية وأجهزة تقويمية", "تحليل مخبري", "تخدير", "تشخيص وعلاج شعاعي", "تغذية", "تغذية علاجية", "تقويم الكلام واللغة", "تمريض", "سمعيات", "طوارئ", "علاج وظيفي", "علم النفس السريري", "قبالة", "مخابر", "معالجة فيزيائية", "نطق"],
+      "علوم علم الحياة": ["حيوية بيئية", "علم الأحياء الدقيقة"],
+      "علوم فيزياء": [],
+      "علوم فيزياء تطبيقية": [],
+      "علوم كيمياء": ["بحتة", "تحليلية", "تطبيقية", "حيوية", "عامة"],
+      "فنون": ["تمثيل أو إخراج سينمائي"],
+      "فنون جميلة": ["إعلان", "تصميم داخلي", "تصميم غرافيكي وملتيميدي", "تصوير", "عمارة داخلية"],
+      "كلية تطبيقية": ["تصنيع ميكانيكي", "تغذية كهربائية للمنشآت صناعية ومدن", "تقنيات إلكترونية", "تقنيات أجهزة طبية", "طاقات متجددة (طاقة شمسية)", "ميكانيك مركبات"],
+      "هندسة الذكاء الاصطناعي": ["امن نظم المعلومات", "هندسة الذكاء الصناعي و علوم البيانات", "هندسة الروبوت و النظم الذكية"],
+      "هندسة بتروكيماوية": ["هندسة الغزل والنسيج", "هندسة بترولية", "هندسة كيميائية", "هنسة غذائية"],
+      "هندسة تقنية": ["اتمتة صناعية", "معدات وآليات", "تقانات هندسة بيئية", "تقانات هندسة حيوية", "تقانة أغذية", "تكنولوجيا أغذية", "طاقات متجددة", "معدات وآليات", "مكننة زراعية"],
+      "هندسة تكنلوجيا معلومات واتصالات": ["معلومات", "نظم حاسوبية"],
+      "هندسة زراعية": ["اقتصاد زراعي", "إنتاج حيواني  دواجن", "إنتاج حيواني مجترات", "بساتين", "بيئة و حراج", "تربة واستصلاح أراضي", "شعبة عامة", "علوم الأغذية", "علوم وقاية النبات", "محاصيل حقلية", "هندسة ريفية"],
+      "هندسة طبية ذكية ومعلوماتية حيوية": [],
+      "هندسة طيران": [],
+      "هندسة كهربائية": ["آلات وقيادة كهربائية", "تحكم آلي", "حواسيب وأتمتة", "شبكات", "طافات كهربائية", "طاقات متجددة", "طاقة", "نظم القدرة الكهربائية", "هندسة التحكم والاتمتة", "هندسة إلكترونية"],
+      "هندسة مدنية": ["إدارة و تشييد", "إنشائية", "بيئة", "جيوتكنيك", "ري و صرف", "زلزالية", "طبوغرافيا", "مائية", "مواصلات ونقل"],
+      "هندسة معلوماتية": ["برمجيات ونظم المعلومات", "ذكاء صنعي", "نظم الحاسوب و المعلومات", "نظم وشبكات"],
+      "هندسة معمارية": ["تخطيط بيئي", "تصميم معماري", "ديكور وتصميم داخلي", "علوم البناء والتنفيذ", "هندسة  مدن"],
+      "هندسة ميكانيكية": ["الات زراعية", "انتاج", "تصميم وإنتاج", "تصنيع ميكانيكي", "سيارات وآليات ثقيلة", "علم المواد الهندسية", "قوى ميكانيكية", "لحام وتشكيل معادن", "مياكنيك مركبات وآليات", "ميكاترونيك", "ميكانيك-طاقة متجددة", "ميكانيك عام", "ميكانيك غزل ونسيج", "نماذج وسباكة", "هندسة صناعية", "هندسة ميكاترونيكس"],
+      "هندسة ميكانيكية إلكترونية": ["تحكم آلي", "حواسيب وأتمتة", "هندسة إلكترونية"],
+      "هندسة ميكانيكية وكهربائية": ["ميكانيك عام", "هندسة اتصالات", "هندسة البحرية", "هندسة طبية"]
+    },
+    "إجازة جامعية": {
+      "المعهد العالي للفنون السينمائية": [],
+      "المعهد العالي للفنون المسرحية": [],
+      "المعهد العالي للموسيقا": [],
+      "إعلام": ["إذاعة وتلفزيون", "إعلام إلكتروني", "صحافة ونشر", "علاقات عامة"],
+      "آداب وعلوم إنسانية": ["آثار", "تاريخ", "جغرافيا", "علم اجتماع", "فلسفة", "لغة اسبانية", "لغة المانية", "لغة إنكليزية", "لغة تركية", "لغة صينية", "لغة عربية", "لغة فرنسية", "لغة يابانية", "مكتبات ومعلومات"],
+      "تربية": ["ارشاد سلوكي", "اقتصاد منزلي", "إرشاد نفسي", "تخطيط وإدارة تربوية", "تربية خاصة", "تربية رياضية", "رياض أطفال", "علم نفس", "معالجة نطق", "معلم صف", "مناهج وتقنيات التعليم", "مناهج وطرائق تدريس", "موسيقية"],
+      "تمريض": [],
+      "حقوق": [],
+      "سياحة": ["إدارة فندقية", "إدارة منشآت سياحية", "إرشاد سياحي", "قسم سياحي"],
+      "شريعة": [],
+      "صيدلة": ["أدوية و سموم", "صيدلانيات وتكنولوجيا صيدلية", "عقاقير", "كيمياء تحليلية وغذائية"],
+      "طب أسنان": ["قسم تعويضات الأسنان الثابتة", "قسم تقويم الأسنان والفكين", "قسم جراحة الفم والفكين", "قسم طب الفم", "قسم طب أسنان الأطفال"],
+      "طب بشري": ["أطفال", "تحليل مخبري", "تخدير", "تشخيص مخبري", "داخلية", "عناية مشددة أطفال", "قلبية أطفال", "نسائية"],
+      "طب بيطري": [],
+      "علوم الحاسوب": [],
+      "علوم العلوم البيئية": [],
+      "علوم بيولوجيا": [],
+      "علوم تطبيقية": ["الدراسات المالية والمصرفية", "إدارة لوجستيات التجارة والنقل الدولي", "إدارة مشروعات متوسطة وصغيرة", "تدفئة وتبريد وتكييف", "حاسوب ونظم معلومات في الاقتصاد والإدارة والمحاسبة", "علوم مالية ومصرفية", "ميكاترونكس"],
+      "علوم تقانة ليزر": [],
+      "علوم جيولوجيا": ["جيوفيزياء", "جيولوجيا تطبيقية", "علوم الزلازل", "هيدروجيولوجيا"],
+      "علوم رياضيات": ["إحصاء رياضي", "تحليل رياضي", "رياضيات بحتة", "رياضيات تطبيقية ومعلوماتية", "رياضيات نظرية"],
+      "علوم سياسية": ["اقتصاد دولي", "دراسات دولية ودبلوماسية", "دراسات سياسية", "علاقات دولية"],
+      "علوم صحية": ["إدارة معلومات صحية", "أطراف صناعية وأجهزة تقويمية", "تحليل مخبري", "تخدير", "تشخيص وعلاج شعاعي", "تغذية", "تغذية علاجية", "تقويم الكلام واللغة", "تمريض", "سمعيات", "طوارئ", "علاج وظيفي", "علم النفس السريري", "قبالة", "مخابر", "معالجة فيزيائية", "نطق"],
+      "علوم علم الحياة": ["حيوية بيئية", "علم الأحياء الدقيقة"],
+      "علوم فيزياء": [],
+      "علوم فيزياء تطبيقية": [],
+      "علوم كيمياء": ["بحتة", "تحليلية", "تطبيقية", "حيوية", "عامة"],
+      "فنون": ["تمثيل أو إخراج سينمائي"],
+      "فنون جميلة": ["إعلان", "تصميم داخلي", "تصميم غرافيكي وملتيميدي", "تصوير", "عمارة داخلية"],
+      "كلية تطبيقية": ["تصنيع ميكانيكي", "تغذية كهربائية للمنشآت صناعية ومدن", "تقنيات إلكترونية", "تقنيات أجهزة طبية", "طاقات متجددة (طاقة شمسية)", "ميكانيك مركبات"],
+      "هندسة الذكاء الاصطناعي": ["امن نظم المعلومات", "هندسة الذكاء الصناعي و علوم البيانات", "هندسة الروبوت و النظم الذكية"],
+      "هندسة بتروكيماوية": ["هندسة الغزل والنسيج", "هندسة بترولية", "هندسة كيميائية", "هنسة غذائية"],
+      "هندسة تقنية": ["اتمتة صناعية", "معدات وآليات", "تقانات هندسة بيئية", "تقانات هندسة حيوية", "تقانة أغذية", "تكنولوجيا أغذية", "طاقات متجددة", "معدات وآليات", "مكننة زراعية"],
+      "هندسة تكنلوجيا معلومات واتصالات": ["معلومات", "نظم حاسوبية"],
+      "هندسة زراعية": ["اقتصاد زراعي", "إنتاج حيواني  دواجن", "إنتاج حيواني مجترات", "بساتين", "بيئة و حراج", "تربة واستصلاح أراضي", "شعبة عامة", "علوم الأغذية", "علوم وقاية النبات", "محاصيل حقلية", "هندسة ريفية"],
+      "هندسة طبية ذكية ومعلوماتية حيوية": [],
+      "هندسة طيران": [],
+      "هندسة كهربائية": ["آلات وقيادة كهربائية", "تحكم آلي", "حواسيب وأتمتة", "شبكات", "طافات كهربائية", "طاقات متجددة", "طاقة", "نظم القدرة الكهربائية", "هندسة التحكم والاتمتة", "هندسة إلكترونية"],
+      "هندسة مدنية": ["إدارة و تشييد", "إنشائية", "بيئة", "جيوتكنيك", "ري و صرف", "زلزالية", "طبوغرافيا", "مائية", "مواصلات ونقل"],
+      "هندسة معلوماتية": ["برمجيات ونظم المعلومات", "ذكاء صنعي", "نظم الحاسوب و المعلومات", "نظم وشبكات"],
+      "هندسة معمارية": ["تخطيط بيئي", "تصميم معماري", "ديكور وتصميم داخلي", "علوم البناء والتنفيذ", "هندسة  مدن"],
+      "هندسة ميكانيكية": ["الات زراعية", "انتاج", "تصميم وإنتاج", "تصنيع ميكانيكي", "سيارات وآليات ثقيلة", "علم المواد الهندسية", "قوى ميكانيكية", "لحام وتشكيل معادن", "مياكنيك مركبات وآليات", "ميكاترونيك", "ميكانيك-طاقة متجددة", "ميكانيك عام", "ميكانيك غزل ونسيج", "نماذج وسباكة", "هندسة صناعية", "هندسة ميكاترونيكس"],
+      "هندسة ميكانيكية إلكترونية": ["تحكم آلي", "حواسيب وأتمتة", "هندسة إلكترونية"],
+      "هندسة ميكانيكية وكهربائية": ["ميكانيك عام", "هندسة اتصالات", "هندسة البحرية", "هندسة طبية"]
+    },
+    "دكتوراه": {
+      "اقتصاد وعلوم إدارية": [],
+      "المعهد العالي للفنون السينمائية": [],
+      "المعهد العالي للفنون المسرحية": [],
+      "المعهد العالي للموسيقا": [],
+      "إعلام": [],
+      "آداب وعلوم إنسانية": [],
+      "تربية": [],
+      "تمريض": [],
+      "حقوق": [],
+      "سياحة": [],
+      "شريعة": [],
+      "صيدلة": [],
+      "طب أسنان": [],
+      "طب بشري": [],
+      "طب بيطري": [],
+      "علوم الحاسوب": [],
+      "علوم العلوم البيئية": [],
+      "علوم بيولوجيا": [],
+      "علوم تطبيقية": [],
+      "علوم تقانة ليزر": [],
+      "علوم جيولوجيا": [],
+      "علوم رياضيات": [],
+      "علوم سياسية": [],
+      "علوم صحية": [],
+      "علوم علم الحياة": [],
+      "علوم فيزياء": [],
+      "علوم فيزياء تطبيقية": [],
+      "علوم كيمياء": [],
+      "فنون": [],
+      "فنون جميلة": [],
+      "كلية تطبيقية": [],
+      "هندسة الذكاء الاصطناعي": [],
+      "هندسة بتروكيماوية": [],
+      "هندسة تقنية": [],
+      "هندسة تكنلوجيا معلومات واتصالات": [],
+      "هندسة زراعية": [],
+      "هندسة طبية ذكية ومعلوماتية حيوية": [],
+      "هندسة طيران": [],
+      "هندسة كهربائية": [],
+      "هندسة مدنية": [],
+      "هندسة معلوماتية": [],
+      "هندسة معمارية": [],
+      "هندسة ميكانيكية": [],
+      "هندسة ميكانيكية إلكترونية": [],
+      "هندسة ميكانيكية وكهربائية": []
+    },
+    "التعليم الأساسي": { "عام": [] },
+    "قراءة وكتابة": { "عام": [] },
+    "لا يجيد القراءة والكتابة": { "عام": [] }
+  };
+
+  const birthGovernorates = ["إدلب","الحسكة","الرقة","السويداء","القنيطرة","اللاذقية","حلب","حماة","حمص","درعا","دمشق","دير_الزور","ريف_دمشق","طرطوس","خارج سورية"];
+  const workGovernorates = ["الحسكة", "حلب", "الرقة", "دير الزور"];
+  
+  const orgLevel1List = [
+    "الأمانة العامة لرئاسة الجمهورية _ شؤون مجلس الوزراء","الجهاز المركزي للرقابة المالية","الشؤون المدنية",
+    "المحكمة الدستورية العليا","الهيئة المركزية للرقابة والتفتيش","الهيئة الوطنية للعدالة الانتقالية",
+    "الهيئة الوطنية للمفقودين","مجلس الدولة","مجلس الشعب","مركز التدريب والتأهيل المصرفي",
+    "مصرف سوريا المركزي","هيئة الأوراق والأسواق المالية السورية","هيئة التخطيط والإحصاء",
+    "هيئة الطاقة الذرية","هيئة الطيران المدني","الهيئة العامة للمنافذ والجمارك",
+    "وزارة الاتصالات وتقانة المعلومات","وزارة الاقتصاد والصناعة","وزارة الإدارة المحلية والبيئة",
+    "وزارة الإعلام","وزارة الأشغال العامة والإسكان","وزارة الأوقاف","وزارة التربية والتعليم",
+    "وزارة التعليم العالي والبحث العلمي","وزارة التنمية الإدارية","وزارة الثقافة",
+    "وزارة الخارجية والمغتربين","وزارة الداخلية","وزارة الدفاع","وزارة الرياضة والشباب",
+    "وزارة الزراعة","وزارة السياحة","وزارة الشؤون الاجتماعية والعمل","وزارة الصحة",
+    "وزارة الطاقة","وزارة الطوارئ وإدارة الكوارث","وزارة العدل","وزارة المالية","وزارة النقل"
+  ];
+
+  let currentCenter = null;
+  let rowCount = 0;
+
+  function init() {
+    const grid = document.getElementById('centersGrid');
+    centers.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'center-btn';
+      btn.textContent = c.name;
+      btn.onclick = () => openPwd(c);
+      grid.appendChild(btn);
+    });
+  }
+
+  function openPwd(c) {
+    currentCenter = c;
+    document.getElementById('selCenterName').textContent = c.name;
+    document.getElementById('pwdForm').style.display = 'block';
+    document.getElementById('centersGrid').style.display = 'none';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdError').style.display = 'none';
+  }
+
+  function loadSubmittedNames() {
+    const logContainer = document.getElementById('submittedLog');
+    const list = document.getElementById('submittedList');
+    list.innerHTML = '';
+    
+    let saved = localStorage.getItem('submitted_' + currentCenter.name);
+    if (saved) {
+      let names = JSON.parse(saved);
+      if (names.length > 0) {
+        logContainer.style.display = 'block';
+        names.forEach(name => {
+          let li = document.createElement('li');
+          li.className = 'submitted-item';
+          li.innerHTML = `<span>✔️</span> ${name}`;
+          list.appendChild(li);
+        });
+      } else {
+        logContainer.style.display = 'none';
+      }
+    } else {
+      logContainer.style.display = 'none';
+    }
+  }
+
+  function closeWelcomeModal() {
+    document.getElementById('welcomeModal').style.display = 'none';
+  }
+
+  function verifyPwd() {
+    if (document.getElementById('pwdInput').value === currentCenter.pwd) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('gridScreen').style.display = 'block';
+      document.getElementById('welcomeModal').style.display = 'flex';
+      
+      const welcomeText = "أهلاً بك " + (currentCenter.manager || "أستاذي الكريم");
+      document.querySelector('#welcomeModal h3').textContent = welcomeText;
+      
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(welcomeText);
+        utterance.lang = 'ar-SA';
+        window.speechSynthesis.speak(utterance);
+      }
+      
+      document.getElementById('activeCenter').textContent = currentCenter.name;
+      rowCount = 0;
+      document.getElementById('tableBody').innerHTML = '';
+      loadSubmittedNames();
+      addRow();
+    } else {
+      document.getElementById('pwdError').style.display = 'block';
+    }
+  }
+
+  function backToCenters() {
+    document.getElementById('pwdForm').style.display = 'none';
+    document.getElementById('centersGrid').style.display = 'grid';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdError').style.display = 'none';
+  }
+
+  function logout() {
+    document.getElementById('gridScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    backToCenters();
+  }
+
+  function addRow() {
+    rowCount++;
+    const tbody = document.getElementById('tableBody');
+    const row = document.createElement('tr');
+    row.dataset.rowId = rowCount;
+
+    const qualOptions = Object.keys(specsHierarchy).map(q => `<option value="">اختر...</option>${Object.keys(specsHierarchy).map(q => `<option value="${q}">${q}</option>`).join('')}`).join('');
+    const orgLvl1Opts = `<option value="">اختر...</option>` + orgLevel1List.map(o => `<option>${o}</option>`).join('');
+    const birthGovOpts = `<option value="">اختر...</option>` + birthGovernorates.map(g => `<option>${g}</option>`).join('');
+    const workGovOpts = `<option value="">اختر...</option>` + workGovernorates.map(g => `<option>${g}</option>`).join('');
+
+    row.innerHTML = `
+      <td><button class="del-btn" onclick="deleteRow(this)">X</button></td>
+      <td><input type="text" value="${rowCount}" readonly style="background:#eee;"></td>
+      <td><input type="text" placeholder="الاسم الكامل"></td>
+      <td><select><option value="">اختر...</option><option>سوري</option><option>فلسطيني سوري</option><option>غير ذلك</option></select></td>
+      <td><select><option value="">اختر...</option><option>ذكر</option><option>أنثى</option></select></td>
+      <td><select>${birthGovOpts}</select></td>
+      <td><input type="date"></td>
+      <td><input type="text" placeholder="الرقم الوطني"></td>
+      <td><input type="text" placeholder="رقم الهاتف"></td>
+      <td><select>${workGovOpts}</select></td>
+      <td><input type="text" placeholder="اسم الجهة"></td>
+      <td><select>${orgLvl1Opts}</select></td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td><input type="date"></td>
+      <td><input type="text" placeholder="المسمى الوظيفي"></td>
+      <td><select onchange="updateGeneralSpecs(this)"><option value="">اختر المؤهل...</option>${Object.keys(specsHierarchy).map(q => `<option value="${q}">${q}</option>`).join('')}</select></td>
+      <td><select class="gen-spec" onchange="updateSpecificSpecs(this)"><option value="">اختر التخصص العام...</option></select></td>
+      <td><select class="det-spec"><option value="">اختر التخصص الدقيق...</option></select></td>
+      <td><input type="number" placeholder="الراتب"></td>
+      <td><select><option value="">اختر...</option><option>نعم</option><option>لا</option></select></td>
+      <td><select><option value="">اختر...</option><option>نعم</option><option>لا</option></select></td>
+      <td><select><option value="">اختر...</option><option>نعم</option><option>لا</option></select></td>
+      <td><select><option value="">اختر...</option><option>نعم</option><option>لا</option><option>-</option></select></td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    `;
+    tbody.appendChild(row);
+  }
+
+  function deleteRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+    updateSerialNumbers();
+  }
+
+  function updateSerialNumbers() {
+    const rows = document.querySelectorAll('#tableBody tr');
+    rows.forEach((row, index) => {
+      row.querySelector('td:nth-child(2) input').value = index + 1;
+    });
+    rowCount = rows.length;
+  }
+
+  function updateGeneralSpecs(sel) {
+    const row = sel.closest('tr');
+    const qualVal = sel.value;
+    const genSelect = row.querySelector('.gen-spec');
+    const detSelect = row.querySelector('.det-spec');
+    
+    genSelect.innerHTML = '<option value="">اختر التخصص العام...</option>';
+    detSelect.innerHTML = '<option value="">اختر التخصص الدقيق...</option>';
+
+    if (qualVal && specsHierarchy[qualVal]) {
+      Object.keys(specsHierarchy[qualVal]).forEach(genSpec => {
+        genSelect.innerHTML += `<option value="${genSpec}">${genSpec}</option>`;
+      });
+    }
+  }
+
+  function updateSpecificSpecs(sel) {
+    const row = sel.closest('tr');
+    const qualSelect = row.querySelector('td:nth-child(17) select');
+    const qualVal = qualSelect.value;
+    const genVal = sel.value;
+    const detSelect = row.querySelector('.det-spec');
+    
+    detSelect.innerHTML = '<option value="">اختر التخصص الدقيق...</option>';
+
+    if (qualVal && genVal && specsHierarchy[qualVal] && specsHierarchy[qualVal][genVal]) {
+      const specs = specsHierarchy[qualVal][genVal];
+      if (specs && specs.length > 0) {
+        specs.forEach(spec => {
+          detSelect.innerHTML += `<option value="${spec}">${spec}</option>`;
+        });
+      }
+    }
+  }
+
+  function exportToSheet() {
+    const rows = document.querySelectorAll('#tableBody tr');
+    if (rows.length === 0) {
+      alert('الجدول فارغ!');
+      return;
+    }
+    
+    // إظهار رسالة تحميل
+    const saveBtn = document.querySelector('.btn-save');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '⏳ جاري الحفظ...';
+    saveBtn.disabled = true;
+
+    let data = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input, select');
+      const rowData = {
+        col1: inputs[0].value, // تسلسل
+        col2: inputs[1].value, // الاسم والكنية
+        col3: inputs[2].value, // الجنسية
+        col4: inputs[3].value, // الجنس
+        col5: inputs[4].value, // محافظة الولادة
+        col6: inputs[5].value, // تاريخ الولادة
+        col7: inputs[6].value, // الرقم الوطني
+        col8: inputs[7].value, // رقم التواصل
+        col9: inputs[8].value, // محافظة العمل
+        col10: inputs[9].value, // اسم الجهة/المؤسسة السابقة
+        col11: inputs[10].value, // المستوى التنظيمي الأولى
+        col12: inputs[11].value, // المستوى التنظيمي الثاني
+        col13: inputs[12].value, // المستوى التنظيمي الثالث
+        col14: inputs[13].value, // تاريخ بدء العمل
+        col15: inputs[14].value, // المسمى الوظيفي
+        col16: inputs[15].value, // المؤهل العلمي
+        col17: inputs[16].value, // التخصص العام
+        col18: inputs[17].value, // التخصص الدقيق
+        col19: inputs[18].value, // الراتب الشهري الأخير
+        col20: inputs[19].value, // هل تم تدقيق اثبات الشخصية؟
+        col21: inputs[20].value, // هل تم تدقيق صك التعاقد السابق؟
+        col22: inputs[21].value, // هل تم تدقيق المؤهل العلمي المتعاقد على أساسه؟
+        col23: inputs[22].value, // هل المسمى الوظيفي مطابق مع المؤهل العلمي والاختصاص؟
+        col24: inputs[23].value, // المسمى الوظيفي ومكان العمل المقترح في حال عدم المطابقة
+        col25: inputs[24].value  // مدى ومبرر الحاجة للتعاقد
+      };
+      data.push(rowData);
+    });
+    
+    // الرابط الذي ستحصل عليه من Google Apps Script
+    // يجب استبدال هذا الرابط بالرابط الخاص بك
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznJm5izl4zGuS-FdRFDiYHkIWzF5sGYxtTEiatgtX3nYMGfNoCbiYJtfsWoSClNHKqIA/exec'; 
+
+    const payload = {
+      centerName: currentCenter.name,
+      rows: data
+    };
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // إعادة no-cors لأن جوجل يتطلبها مع الطلبات من المتصفح
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => {
+      // إظهار نافذة النجاح الاحترافية بدلاً من alert العادي
+      document.getElementById('successMessageText').textContent = `تم إرسال البيانات بنجاح للمركز: ${currentCenter.name}`;
+      document.getElementById('successModal').style.display = 'flex';
+      
+      const successVoiceText = "عمل رائع " + (currentCenter.manager || "أستاذي الكريم") + " شكرا لك لإرسال البيانات";
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(successVoiceText);
+        utterance.lang = 'ar-SA';
+        window.speechSynthesis.speak(utterance);
+      }
+      
+      saveBtn.innerHTML = originalText;
+      saveBtn.disabled = false;
+      
+      // حفظ الأسماء المُرسلة في الذاكرة المحلية للمتصفح
+      let saved = localStorage.getItem('submitted_' + currentCenter.name);
+      let namesArray = saved ? JSON.parse(saved) : [];
+      data.forEach(row => {
+        if (row.col2 && row.col2.trim() !== '') {
+          namesArray.push(row.col2.trim());
+        }
+      });
+      localStorage.setItem('submitted_' + currentCenter.name, JSON.stringify(namesArray));
+      
+      // تحديث قائمة الأسماء المرفوعة
+      loadSubmittedNames();
+
+      // تفريغ الجدول بعد الحفظ الناجح
+      document.getElementById('tableBody').innerHTML = ''; 
+      rowCount = 0;
+      addRow(); // إضافة صف فارغ جديد ليكون جاهزاً للإدخال القادم
+    })
+    .catch(error => {
+      alert('❌ حدث خطأ أثناء الحفظ، يرجى المحاولة مرة أخرى.');
+      console.error('Error!', error.message);
+      saveBtn.innerHTML = originalText;
+      saveBtn.disabled = false;
+    });
+  }
+
+  function closeSuccessModal() {
+    document.getElementById('successModal').style.display = 'none';
+  }
+
+  init();
+</script>
+</body>
+</html>
